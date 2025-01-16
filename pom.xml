@@ -16,12 +16,15 @@
 	<description>Demo project for Spring Boot</description>
     <modules>
 		<module>junitfundamentals</module>
+		<module>testdrivendesign</module>
+		<module>springbootunittesting</module>
+		<module>mokitotesting</module>
+
 	</modules>
     <properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>

@@ -1,6 +1,7 @@
 package com.lalitbhanot.demo;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 
 import java.util.List;
 
@@ -29,6 +30,31 @@ static void setUpBeforeAll(){
     static void setAfterAll(){
         System.out.println("AfterAll Running...") ;
     }
+
+
+    @Test
+    @Disabled("Dont run")
+    void basicTest (){}
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void basicTestOnWIndowsOnly (){
+        System.out.println("Running on windows only ...") ;
+    }
+    @Test
+    @EnabledOnJre(JRE.JAVA_17)
+    void basicTestOnJre (){
+        System.out.println("Runningb asicTestOnJre on  only JAVA_17 ...") ;
+    }
+
+    @Test
+    @EnabledForJreRange(min = JRE.JAVA_8,max = JRE.JAVA_17)
+    void basicTestOnJreRange (){
+        System.out.println("Running EnabledForJreRange  on windows min = JRE.JAVA_8,max = JRE.JAVA_17 ...") ;
+    }
+
+
+
 
     @Test
     void testIterableNotEquals() {
