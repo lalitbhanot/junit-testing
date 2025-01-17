@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class MvcTestingExampleApplicationTest {
@@ -62,4 +62,34 @@ public class MvcTestingExampleApplicationTest {
         assertEquals(100,applicationService.addGradeResultsForSingleClass(student.getStudentGrades().getMathGradeResults()));
         verify(applicationDao).addGradeResultsForSingleClass(studentGrades.getMathGradeResults());
     }
+
+    @DisplayName("runtime error")
+    @Test
+    public void throwsRuntimeError(){
+        CollegeStudent nullStudent = (CollegeStudent) context.getBean("collegeStudent");
+        doThrow(new RuntimeException()).when(applicationDao).checkNull(nullStudent) ;
+        assertThrows(RuntimeException.class,() -> {
+            applicationService.checkNull(nullStudent) ;
+        }) ;
+    }
+
+    @DisplayName("Multiple Stubbing")
+    @Test
+    public void stubbingConsecutiveCalls() {
+        CollegeStudent nullStudent = (CollegeStudent) context.getBean("collegeStudent");
+
+        when(applicationDao.checkNull(nullStudent))
+                .thenThrow(new RuntimeException())
+                .thenReturn("Do not throw exception second time");
+
+        assertThrows(RuntimeException.class, () -> {
+            applicationService.checkNull(nullStudent);
+        });
+
+        assertEquals("Do not throw exception second time",
+                applicationService.checkNull(nullStudent));
+
+        verify(applicationDao, times(2)).checkNull(nullStudent);
+    }
+
 }
