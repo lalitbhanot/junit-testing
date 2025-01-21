@@ -32,4 +32,18 @@ public class StudentAndGradeService {
         Iterable<CollegeStudent> studentsIterable = studentDao.findAll() ;
         return  studentsIterable ;
     }
+
+    public boolean checkIfStudentIsNull(int id) {
+        Optional<CollegeStudent> student = studentDao.findById(id);
+        if (student.isPresent()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void deleteStudent(int id) {
+        if (checkIfStudentIsNull(id)) {
+            studentDao.deleteById(id);
+        }
+    }
 }

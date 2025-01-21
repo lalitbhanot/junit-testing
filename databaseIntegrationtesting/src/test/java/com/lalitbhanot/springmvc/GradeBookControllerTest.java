@@ -26,8 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,14 +53,14 @@ public class GradeBookControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private StudentAndGradeService studentAndGradeServiceMock;
+    private StudentAndGradeService studentCreateServiceMock;
 
     @BeforeAll
     public static void setRequest(){
-request = new MockHttpServletRequest() ;
-request.setParameter("lalit","bhanot","lal@gmail.com");
-        request.setParameter("lalit2","bhanot2","lal2@gmail.com");
-        request.setParameter("lalit3","bhanot3","lal3@gmail.com");
+    request = new MockHttpServletRequest() ;
+        request.setParameter("firstname", "lalit");
+        request.setParameter("lastname", "bhanot");
+        request.setParameter("emailAddress", "email@a.com");
     }
 
     @BeforeEach
@@ -79,8 +81,8 @@ request.setParameter("lalit","bhanot","lal@gmail.com");
         CollegeStudent collegeStudent2 = new GradebookCollegeStudent("fname2", "lname2", "email2");
         List<CollegeStudent> collegeStudentList = new ArrayList<>(Arrays.asList(collegeStudent1, collegeStudent2));
 
-        when(studentAndGradeServiceMock.getGradeBook()).thenReturn(collegeStudentList);
-        assertIterableEquals(collegeStudentList, studentAndGradeServiceMock.getGradeBook());
+        when(studentCreateServiceMock.getGradeBook()).thenReturn(collegeStudentList);
+        assertIterableEquals(collegeStudentList, studentCreateServiceMock.getGradeBook());
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/")).andExpect(status().isOk()).andReturn();
 
@@ -88,15 +90,58 @@ request.setParameter("lalit","bhanot","lal@gmail.com");
         ModelAndViewAssert.assertViewName(mav,"index");
     }
 
+
     @Test
     public void createStudentHttpRequest() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(post("/").contentType(MediaType.APPLICATION_JSON)
+
+        CollegeStudent studentOne = new CollegeStudent("Eric",
+                "Roby", "eric_roby@luv2code_school.com");
+
+        List<CollegeStudent> collegeStudentList = new ArrayList<>(Arrays.asList(studentOne));
+
+        when(studentCreateServiceMock.getGradeBook()).thenReturn(collegeStudentList);
+
+        assertIterableEquals(collegeStudentList, studentCreateServiceMock.getGradeBook());
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .param("firstname", request.getParameterValues("firstname"))
                         .param("lastname", request.getParameterValues("lastname"))
-                        .param("email", request.getParameterValues("email"))).andExpect(status().isOk()).andReturn();
+                        .param("emailAddress", request.getParameterValues("emailAddress")))
+                .andExpect(status().isOk()).andReturn();
 
         ModelAndView mav = mvcResult.getModelAndView();
-        ModelAndViewAssert.assertViewName(mav,"index");
+        ModelAndViewAssert.assertViewName(mav, "index");
+        CollegeStudent verifyStudent = studentDao.findByEmailAddress("email@a.com");
+        assertNotNull(verifyStudent, "Student should be found");
 
+    }
+
+    @Test
+    public void deleteStudentHttpRequestErrorPage() throws Exception {
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/delete/student/{id}", 0))
+                .andExpect(status().isOk()).andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+
+        ModelAndViewAssert.assertViewName(mav, "error");
+    }
+
+
+
+    @Test
+    public void deleteStudentService() {
+
+        Optional<CollegeStudent> deletedCollegeStudent = studentDao.findById(1);
+
+        assertTrue(deletedCollegeStudent.isPresent(), "Return True");
+
+        studentService.deleteStudent(1);
+
+        deletedCollegeStudent = studentDao.findById(1);
+
+        assertFalse(deletedCollegeStudent.isPresent(), "Return False");
     }
 }

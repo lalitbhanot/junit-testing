@@ -14,9 +14,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource("/application.properties")
 @SpringBootTest
@@ -72,6 +72,7 @@ assertTrue(studentService.checkStudentIdisNull(1));
         jdbctemplate.execute("DELETE FROM STUDENT");
         jdbctemplate.execute("ALTER TABLE STUDENT ALTER COLUMN ID RESTART WITH 1");
     }
+
 
 
     }
