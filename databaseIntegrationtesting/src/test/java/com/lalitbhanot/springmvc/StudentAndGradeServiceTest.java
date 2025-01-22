@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
@@ -43,42 +44,63 @@ public class StudentAndGradeServiceTest {
     @Autowired
     private HistoryGradesDao historyGradeDao;
 
-//    @BeforeEach
-//    public void setupData()
-//    {
-//        jdbctemplate.execute("insert into student (firstName,lastName,email_address) values ('lalit','bhanot','lal@gmail.com') ;");
-//        jdbctemplate.execute("insert into math_grade(student_id,grade) values (1,100.00)");
-//        jdbctemplate.execute("insert into science_grade(student_id,grade) values (1,100.00)");
-//        jdbctemplate.execute("insert into history_grade(student_id,grade) values (1,100.00)");
-//    }
+    @Value("${sql.script.create.student}")
+    private String sqlAddStudent ;
+    @Value("${sql.script.create.math.grade}")
+    private String sqlAddMathGrade ;
+    @Value("${sql.script.create.science.grade}")
+    private String sqlAddScienceGrade ;
+    @Value("${sql.script.create.history.grade}")
+    private String sqlAddHistoryGrade ;
+
+    @Value("${sql.script.delete.student}")
+    private String sqlDeleteStudent ;
+    @Value("${sql.script.delete.math.grade}")
+    private String sqlDeletMathGrade ;
+    @Value("${sql.script.delete.science.grade}")
+    private String sqlDeleteScienceGrade ;
+    @Value("${sql.script.delete.history.grade}")
+    private String sqlDeleteHistoryGrade ;
 
     @BeforeEach
     public void setupDatabase() {
-        jdbctemplate.execute("insert into student(firstname, lastname, email_address) " +
-                "values ('Eric', 'Roby', 'eric.roby@luv2code_school.com')");
+//        jdbctemplate.execute("insert into student(firstname, lastname, email_address) " +
+//                "values ('Eric', 'Roby', 'eric.roby@luv2code_school.com')");
+//
+//        jdbctemplate.execute("insert into math_grade(student_id,grade) values (1,100.00)");
+//
+//        jdbctemplate.execute("insert into science_grade(student_id,grade) values (1,100.00)");
+//
+//        jdbctemplate.execute("insert into history_grade(student_id,grade) values (1,100.00)");
+        jdbctemplate.execute(sqlAddStudent) ;
+        jdbctemplate.execute(sqlAddMathGrade) ;
+        jdbctemplate.execute(sqlAddScienceGrade) ;
+        jdbctemplate.execute(sqlAddHistoryGrade) ;
 
-        jdbctemplate.execute("insert into math_grade(student_id,grade) values (1,100.00)");
 
-        jdbctemplate.execute("insert into science_grade(student_id,grade) values (1,100.00)");
-
-        jdbctemplate.execute("insert into history_grade(student_id,grade) values (1,100.00)");
     }
 
     @AfterEach
     public  void AfterTranscation()
     {
-        jdbctemplate.execute("DELETE FROM STUDENT");
-        jdbctemplate.execute("ALTER TABLE STUDENT ALTER COLUMN ID RESTART WITH 1");
+        jdbctemplate.execute(sqlDeleteStudent);
+        jdbctemplate.execute(sqlDeletMathGrade);
+        jdbctemplate.execute(sqlDeleteScienceGrade);
+        jdbctemplate.execute(sqlDeleteHistoryGrade);
 
-        jdbctemplate.execute("DELETE FROM math_grade");
-        jdbctemplate.execute("ALTER TABLE math_grade ALTER COLUMN ID RESTART WITH 1");
-
-        jdbctemplate.execute("DELETE FROM science_grade");
-        jdbctemplate.execute("ALTER TABLE science_grade ALTER COLUMN ID RESTART WITH 1");
-
-        jdbctemplate.execute("DELETE FROM history_grade");
-        jdbctemplate.execute("ALTER TABLE history_grade ALTER COLUMN ID RESTART WITH 1");
     }
+//        jdbctemplate.execute("DELETE FROM STUDENT");
+//        jdbctemplate.execute("ALTER TABLE STUDENT ALTER COLUMN ID RESTART WITH 1");
+//
+//        jdbctemplate.execute("DELETE FROM math_grade");
+//        jdbctemplate.execute("ALTER TABLE math_grade ALTER COLUMN ID RESTART WITH 1");
+//
+//        jdbctemplate.execute("DELETE FROM science_grade");
+//        jdbctemplate.execute("ALTER TABLE science_grade ALTER COLUMN ID RESTART WITH 1");
+//
+//        jdbctemplate.execute("DELETE FROM history_grade");
+//        jdbctemplate.execute("ALTER TABLE history_grade ALTER COLUMN ID RESTART WITH 1");
+//    }
         @Test
         public void createStudentService() {
 
