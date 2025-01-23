@@ -20,6 +20,7 @@
 		<module>springbootunittesting</module>
 		<module>mokitotesting</module>
         <module>databaseIntegrationtesting</module>
+        <module>restapitesting</module>
 
     </modules>
     <properties>
